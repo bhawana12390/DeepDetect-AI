@@ -48,6 +48,10 @@ Navigate into the project directory:
 ```
 cd DeepDetect-AI
 ```
+
+Create a ```.env``` file and add:
+```GEMINI_API_KEY=AI...```
+
 Install the required dependencies:
 ```
 npm install

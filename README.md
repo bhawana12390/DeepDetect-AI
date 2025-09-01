@@ -1,82 +1,84 @@
-## DeepDetect AI
-DeepDetect AI is a powerful multi-modal tool for identifying deepfakes in images, audio, and videos. It delivers analysis with confidence scores and detailed, LLM-generated explanations for video assessments.
+# DeepDetect AI: Multimodal Deepfake Detection
 
-## Table of Contents
-1. Core Features
-2. Getting Started
-3. Prerequisites
-4. Installation
-5. Usage
-6. Running the Development Server
-7. Building for Production
-8. Contributing
-9. License
+DeepDetect AI is a sophisticated, full-stack web application built to analyze and identify deepfakes in various media formats, including images, audio, and video. It leverages the power of Google's Gemini generative AI to provide not just a detection score, but also a detailed, human-readable justification for its assessment, making complex AI analysis accessible and understandable.
 
-## Core Features:
- Image Analysis: Upload an image to determine if it's a deepfake, complete with a confidence score and a clear explanation.
+## Problem Statement
 
- Audio Analysis: Analyze audio files for signs of deepfake manipulation, receiving a confidence score and a summary.
+In an age of rapidly advancing AI, the line between authentic and synthetic media is becoming increasingly blurred. Deepfakes pose a significant threat, enabling the spread of misinformation, fraud, and malicious content. There is a growing need for accessible tools that can help users, from journalists to casual internet users, verify the authenticity of media they encounter. DeepDetect AI aims to address this problem by providing a user-friendly platform for on-demand deepfake analysis.
 
- Video Analysis: Get a comprehensive deepfake assessment for videos, including:
+## Key Features & Highlights
 
-An overall confidence score.
+*   **Multimodal Analysis:** Capable of processing images, audio files, and videos for signs of digital manipulation.
+*   **AI-Powered Justification:** Instead of just providing a score, the application uses Google Gemini to generate a qualitative, creative explanation for *why* a piece of media is considered authentic or a deepfake.
+*   **Advanced Video Processing:** Utilizes an FFmpeg-powered backend pipeline to demux video files into individual frames and audio tracks. Each component is analyzed separately, and the results are intelligently aggregated for a more accurate and holistic assessment.
+*   **Dual-Source Input:** Users can either upload files directly from their device or analyze media from a public URL, offering flexibility and convenience.
+*   **Polished & Responsive UI:** Built with Next.js, React, Tailwind CSS, and ShadCN UI, the application features a modern, clean, and fully responsive interface that includes animated results, persistent session history, and a seamless user experience.
+*   **Scalable Architecture:** The backend logic is intentionally decoupled, preparing the application to be integrated with a background job queue (like BullMQ) for industry-level scalability and handling of long-running analysis tasks.
 
-An LLM-generated textual justification of the assessment.
+## Methodology: How It Works
 
-A summary of findings from keyframe analysis.
+The application employs a sophisticated, multi-step process to analyze media:
 
-Details from the audio transcript.
+1.  **Media Ingestion:** The user provides media either via file upload or by pasting a URL. The Next.js backend handles both cases, fetching the media if from a URL.
+2.  **Video Demuxing (for Videos):** If the media is a video, it is passed to a serverless function where **FFmpeg** is used to:
+    *   Extract keyframes at a rate of one per second.
+    *   Extract the complete audio track into a separate file.
+3.  **Parallel AI Analysis:**
+    *   **Frames:** Each extracted video frame is sent to the **Google Gemini** vision model for deepfake analysis. The AI looks for visual artifacts like inconsistent lighting, unnatural textures, and strange blurring.
+    *   **Audio:** The extracted audio track (or the original audio file) is sent to Gemini to detect signs of synthesis, such as robotic artifacts, unnatural cadence, or lack of background noise.
+4.  **Result Aggregation:** The confidence scores from all the individual frame analyses are averaged to produce a final `visualConfidence` score. The `audioConfidence` score comes from the audio analysis. These are then weighted and combined into an `overallConfidence` score.
+5.  **Justification Generation:** The AI model also generates a textual justification for each analysis (visual, audio, and overall), explaining its findings in a creative and plausible narrative.
+6.  **Results Display:** The final scores and justifications are presented to the user in a clean, interactive card, with progress bars animating to the final score to create a dynamic experience.
 
-Thumbnails of analyzed keyframes.
+---
 
 ## Getting Started
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
-## Prerequisites
-You need to have Node.js and npm installed on your machine.
-```
-npm
+Follow these instructions to set up and run the project on your local machine.
 
-npm install npm@latest -g
-```
-## Installation
-Clone the repository to your local machine:
-```
-git clone https://github.com/bhawana12390/DeepDetect-AI.git
-```
-Navigate into the project directory:
-```
-cd DeepDetect-AI
-```
+### Prerequisites
 
-Create a ```.env``` file and add:
-```GEMINI_API_KEY=AI...```
+*   [Node.js](https://nodejs.org/) (version 18.x or later)
+*   [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
-Install the required dependencies:
-```
-npm install
-```
-## Usage
-Once the dependencies are installed, you can run the application in various modes.
+### Installation
 
-## Running the Development Server
-To start the application in a development environment with hot-reloading enabled, run the following command:
-```
-npm run dev
-```
-Open http://localhost:9002 (or the port specified in your console) to view it in your browser.
+1.  **Clone the repository:**
+    ```bash
+    git clone https://your-repository-url.com/
+    cd deep-detect-ai
+    ```
 
-## Building for Production
-To create a production-ready build of the application, run:
-```
-npm run build
-```
-This command will compile and optimize the application for the best performance. The build artifacts will be stored in the build/ or dist/ directory.
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
 
-## Contributing
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+3.  **Set up environment variables:**
+    *   You will need an API key from [Google AI Studio](https://aistudio.google.com/app/apikey) to use the Gemini model.
+    *   Create a `.env.local` file in the root of the project by copying the example file:
+        ```bash
+        cp .env.example .env.local
+        ```
+    *   Open `.env.local` and add your Google AI API key:
+        ```
+        GEMINI_API_KEY="YOUR_API_KEY_HERE"
+        ```
 
-Please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+4.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    The application should now be running at [http://localhost:9002](http://localhost:9002).
 
-## License
-Distributed under the MIT License. See LICENSE for more information.
+## Technology Stack
+
+*   **Framework:** [Next.js](https://nextjs.org/) (React)
+*   **Language:** [TypeScript](https://www.typescriptlang.org/)
+*   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+*   **UI Components:** [ShadCN UI](https://ui.shadcn.com/)
+*   **AI:** [Google Gemini](https://deepmind.google/technologies/gemini/) via [Genkit AI Framework](https://firebase.google.com/docs/genkit)
+*   **Backend Media Processing:** [FFmpeg](https://ffmpeg.org/)
+*   **Icons:** [Lucide React](https://lucide.dev/)

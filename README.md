@@ -38,15 +38,15 @@ Follow these instructions to set up and run the project on your local machine.
 
 ### Prerequisites
 
-*   [Node.js](https://nodejs.org/) (version 18.x or later)
+*   [Node.js](https://nodejs.org/) (version 20.x or later)
 *   [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
 ### Installation
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://your-repository-url.com/
-    cd deep-detect-ai
+    git clone https://github.com/bhawana12390/DeepDetect-AI.git
+    cd DeepDetect-AI
     ```
 
 2.  **Install dependencies:**
